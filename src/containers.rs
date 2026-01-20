@@ -15,7 +15,7 @@ pub async fn list() -> Vec<String> {
 
     let options = Some(
         ListContainersOptionsBuilder::new()
-            .all(false)
+            .all(true)
             .filters(&filters)
             .build(),
     );
@@ -23,7 +23,7 @@ pub async fn list() -> Vec<String> {
     match docker.list_containers(options).await {
         Ok(containers) => containers
             .into_iter()
-            .map(|container| {
+            .filter_map(|container| {
                 container
                     .names
                     .and_then(|names| names.into_iter().next())

@@ -5,6 +5,7 @@ pub fn page(body: Markup) -> Markup {
         (DOCTYPE)
         html {
             head {
+                script src="/static/htmx.min.js" {}
                 style type="text/css" {
                     "body { margin: 5% auto; background: #f2f2f2; color: #444444; font-family: -apple-system, BlinkMacSystemFont, \"Segoe UI\", Roboto, Helvetica, Arial, sans-serif; font-size: 16px; line-height: 1.8; text-shadow: 0 1px 0 #ffffff; max-width: 73%; }"
                     "code { background: white; }"
