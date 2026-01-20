@@ -1,20 +1,25 @@
-use actix_web::{get, post, web, App, HttpResponse, HttpServer, Responder};
+use actix_web::{App, HttpServer, Result, get};
+Z
 
-use bollard::Docker;
+use maud::{Markup, html};
+
+mod components;
+mod containers;
 
 #[get("/")]
-async fn hello() -> impl Responder {
-    HttpResponse::Ok().body("Hello world!")
+async fn servers() -> Result<Markup> {
+    let containers = containers::get().await;
+    Ok(components::page(html! {
+        @for name in containers {
+            (components::card("[icon]", name.as_str(), "Placeholder description."))
+        }
+    }))
 }
 
-#[actix_web::main]
+#[actix_web::main] 
 async fn main() -> std::io::Result<()> {
-
-    HttpServer::new(|| {
-        App::new()
-            .service(hello)
-    })
-    .bind(("127.0.0.1", 8080))?
-    .run()
-    .await
+    HttpServer::new(|| App::new().service(servers))
+        .bind(("127.0.0.1", 8080))?
+        .run()
+        .await
 }
