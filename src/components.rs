@@ -19,12 +19,9 @@ pub fn page(body: Markup) -> Markup {
 pub fn card(icon: &str, name: &str, description: &str) -> Markup {
     html! {
         table {
-            tr {
-                td { (icon) }
-                td {
-                    div { (name) }
-                    div { (description) }
-                }
+            td {
+                div { (name) }
+                div { (description) }
             }
         }
     }

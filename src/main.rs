@@ -1,5 +1,5 @@
 use actix_files::Files;
-use actix_web::{App, HttpServer, Result, get, web::ThinData, error::ErrorInternalServerError};
+use actix_web::{App, HttpServer, Result, error::ErrorInternalServerError, get, web::ThinData};
 use bollard::Docker;
 use maud::{Markup, html};
 
@@ -8,7 +8,10 @@ mod containers;
 
 #[get("/")]
 async fn servers(ThinData(docker): ThinData<Docker>) -> Result<Markup> {
-    let containers = containers::list(docker).await.map_err(ErrorInternalServerError)?;
+    let containers = containers::list(docker)
+        .await
+        .map_err(ErrorInternalServerError)?;
+
     Ok(components::page(html! {
         @for name in containers {
             (components::card("[icon]", name.as_str(), "Placeholder description."))
@@ -26,7 +29,7 @@ async fn main() -> std::io::Result<()> {
             .service(Files::new("/static", "./static"))
             .service(servers)
     })
-    .bind(("127.0.0.1", 8080))?
+    .bind(("0.0.0.0", 8080))?
     .run()
     .await
 }
