@@ -23,11 +23,7 @@ pub async fn list() -> Vec<String> {
     match docker.list_containers(options).await {
         Ok(containers) => containers
             .into_iter()
-            .filter_map(|container| {
-                container
-                    .names
-                    .and_then(|names| names.into_iter().next())
-            })
+            .filter_map(|container| container.names.and_then(|names| names.into_iter().next()))
             .collect(),
         Err(_) => Vec::new(),
     }

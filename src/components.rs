@@ -1,4 +1,4 @@
-use maud::{Markup, html, DOCTYPE};
+use maud::{DOCTYPE, Markup, html};
 
 pub fn page(body: Markup) -> Markup {
     html! {
