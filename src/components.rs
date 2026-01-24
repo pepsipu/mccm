@@ -16,13 +16,19 @@ pub fn page(body: Markup) -> Markup {
     }
 }
 
-pub fn card(icon: &str, name: &str, description: &str) -> Markup {
+pub fn card(name: &str, description: &str) -> Markup {
     html! {
-        table {
-            td {
-                div { (name) }
-                div { (description) }
-            }
+        .card {
+            div { (name) }
+            div { (description) }
+        }
+    }
+}
+
+pub fn create_server_card() -> Markup {
+    html! {
+        a href="/create" {
+            (card("Create server", "todo"))
         }
     }
 }

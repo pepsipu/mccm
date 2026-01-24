@@ -1082,6 +1082,7 @@ dependencies = [
  "actix-web",
  "bollard",
  "maud",
+ "serde",
 ]
 
 [[package]]
