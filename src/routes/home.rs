@@ -19,17 +19,11 @@ fn state_str(state: bollard::models::ContainerSummaryStateEnum) -> &'static str 
     }
 }
 
-async fn project_state(docker: &Docker, project: &str) -> Result<String> {
+async fn states_by_project(docker: &Docker) -> Result<HashMap<String, String>> {
     let mut filters = HashMap::new();
-    filters.insert(
-        "label",
-        vec![
-            format!("com.docker.compose.project={project}"),
-            "com.docker.compose.service=mc".to_string(),
-        ],
-    );
+    filters.insert("label", vec!["com.docker.compose.service=mc".to_string()]);
 
-    let mut containers = docker
+    let containers = docker
         .list_containers(Some(
             ListContainersOptionsBuilder::new()
                 .all(true)
@@ -39,28 +33,36 @@ async fn project_state(docker: &Docker, project: &str) -> Result<String> {
         .await
         .map_err(ErrorInternalServerError)?;
 
-    let Some(container) = containers.pop() else {
-        return Ok("not created".to_string());
-    };
+    let mut out = HashMap::new();
+    for container in containers {
+        let project = container
+            .labels
+            .as_ref()
+            .and_then(|m| m.get("com.docker.compose.project"))
+            .cloned();
+        let Some(project) = project else { continue };
 
-    let state = container
-        .state
-        .ok_or_else(|| ErrorInternalServerError("container missing state"))?;
-    Ok(state_str(state).to_string())
+        let state = container
+            .state
+            .ok_or_else(|| ErrorInternalServerError("container missing state"))?;
+        out.insert(project, state_str(state).to_string());
+    }
+
+    Ok(out)
 }
 
 #[get("/")]
 pub async fn home(ThinData(docker): ThinData<Docker>) -> Result<Markup> {
     let servers = compose::list_servers().map_err(ErrorInternalServerError)?;
-    let mut server_states = Vec::with_capacity(servers.len());
-    for name in servers {
-        let state = project_state(&docker, name.as_str()).await?;
-        server_states.push((name, state));
-    }
+    let states = states_by_project(&docker).await?;
 
     Ok(components::page(html! {
-        @for (name, state) in server_states {
-            (components::card(name.as_str(), state.as_str()))
+        @for name in servers {
+            @let state = match states.get(&name) {
+                Some(state) => state.as_str(),
+                None => "not created",
+            };
+            (components::card(name.as_str(), state))
         }
         (components::create_server_card())
     }))
