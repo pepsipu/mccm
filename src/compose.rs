@@ -5,8 +5,9 @@ use std::path::{Path, PathBuf};
 use docker_compose_types::{Compose, Environment, Service, Services, SingleValue};
 use indexmap::indexmap;
 
-fn create_compose() -> Compose {
+fn create_compose(name: &str) -> Compose {
     Compose {
+        name: Some(name.to_string()),
         services: Services(indexmap! {
             "mc".to_string() => Some(Service {
                 image: Some("itzg/minecraft-server".to_string()),
@@ -29,7 +30,7 @@ fn create_compose_project_in(base_dir: &Path, name: &str) -> std::io::Result<()>
     fs::create_dir_all(&project_dir)?;
 
     let compose_path = project_dir.join("compose.yml");
-    let contents = serde_yaml::to_string(&create_compose())
+    let contents = serde_yaml::to_string(&create_compose(name))
         .map_err(|err| std::io::Error::new(std::io::ErrorKind::Other, err))?;
     fs::write(compose_path, contents)?;
 
