@@ -15,8 +15,7 @@ async fn main() -> std::io::Result<()> {
         App::new()
             .app_data(ThinData(docker.clone()))
             .service(Files::new("/static", "./static"))
-            .service(routes::home::home)
-            .service(routes::create::create)
+            .configure(routes::configure)
     })
     .bind(("0.0.0.0", 8080))?
     .run()

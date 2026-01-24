@@ -1,10 +1,17 @@
-use actix_web::{Result, get};
+use actix_web::{HttpResponse, Result, error::ErrorInternalServerError, http::header, web};
 use maud::{Markup, html};
+use serde::Deserialize;
 
-use crate::components;
+use crate::{components, compose};
 
-#[get("/create")]
-pub async fn create() -> Result<Markup> {
+#[derive(Deserialize)]
+struct CreateForm {
+    name: String,
+    #[serde(rename = "type")]
+    server_type: Option<String>,
+}
+
+async fn get_create() -> Result<Markup> {
     Ok(components::page(html! {
         form method="post" action="/create" {
             div {
@@ -18,4 +25,19 @@ pub async fn create() -> Result<Markup> {
             button type="submit" { "Create" }
         }
     }))
+}
+
+async fn post_create(form: web::Form<CreateForm>) -> Result<HttpResponse> {
+    compose::create_compose_project(&form.name).map_err(ErrorInternalServerError)?;
+    Ok(HttpResponse::SeeOther()
+        .insert_header((header::LOCATION, "/"))
+        .finish())
+}
+
+pub fn configure(cfg: &mut web::ServiceConfig) {
+    cfg.service(
+        web::resource("/create")
+            .route(web::get().to(get_create))
+            .route(web::post().to(post_create)),
+    );
 }
