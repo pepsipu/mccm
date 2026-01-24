@@ -6,19 +6,6 @@ use maud::{Markup, html};
 
 use crate::{components, compose};
 
-fn state_str(state: bollard::models::ContainerSummaryStateEnum) -> &'static str {
-    match state {
-        bollard::models::ContainerSummaryStateEnum::CREATED => "created",
-        bollard::models::ContainerSummaryStateEnum::RUNNING => "running",
-        bollard::models::ContainerSummaryStateEnum::PAUSED => "paused",
-        bollard::models::ContainerSummaryStateEnum::RESTARTING => "restarting",
-        bollard::models::ContainerSummaryStateEnum::EXITED => "exited",
-        bollard::models::ContainerSummaryStateEnum::REMOVING => "removing",
-        bollard::models::ContainerSummaryStateEnum::DEAD => "dead",
-        bollard::models::ContainerSummaryStateEnum::EMPTY => "",
-    }
-}
-
 async fn states_by_project(docker: &Docker) -> Result<HashMap<String, String>> {
     let mut filters = HashMap::new();
     filters.insert("label", vec!["com.docker.compose.service=mc".to_string()]);
@@ -45,7 +32,7 @@ async fn states_by_project(docker: &Docker) -> Result<HashMap<String, String>> {
         let state = container
             .state
             .ok_or_else(|| ErrorInternalServerError("container missing state"))?;
-        out.insert(project, state_str(state).to_string());
+        out.insert(project, state.to_string());
     }
 
     Ok(out)
