@@ -1,19 +1,16 @@
 use actix_files::Files;
-use actix_web::{App, HttpServer, web::ThinData};
-use bollard::Docker;
+use actix_web::{App, HttpServer};
 
 mod components;
 mod compose;
 mod routes;
-mod server;
 
 #[actix_web::main]
 async fn main() -> std::io::Result<()> {
-    let docker = Docker::connect_with_local_defaults().expect("failed to create docker client");
+    std::fs::create_dir_all("servers")?;
 
-    HttpServer::new(move || {
+    HttpServer::new(|| {
         App::new()
-            .app_data(ThinData(docker.clone()))
             .service(Files::new("/static", "./static"))
             .configure(routes::configure)
     })

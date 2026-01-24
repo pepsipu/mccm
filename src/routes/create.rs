@@ -7,8 +7,6 @@ use crate::{components, compose};
 #[derive(Deserialize)]
 struct CreateForm {
     name: String,
-    #[serde(rename = "type")]
-    server_type: Option<String>,
 }
 
 async fn get_create() -> Result<Markup> {

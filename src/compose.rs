@@ -40,3 +40,20 @@ pub fn create_compose_project(name: &str) -> std::io::Result<()> {
     let base_dir = env::current_dir()?;
     create_compose_project_in(&base_dir, name)
 }
+
+pub fn list_servers() -> std::io::Result<Vec<String>> {
+    let mut names = Vec::new();
+    for entry in fs::read_dir("servers")? {
+        let entry = entry?;
+        if !entry.file_type()?.is_dir() {
+            continue;
+        }
+
+        if entry.path().join("compose.yml").is_file() {
+            names.push(entry.file_name().to_string_lossy().into_owned());
+        }
+    }
+
+    names.sort();
+    Ok(names)
+}
