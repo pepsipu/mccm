@@ -1,21 +1,42 @@
 use std::env;
-use std::fs::{self, OpenOptions};
-use std::path::PathBuf;
+use std::fs;
+use std::path::{Path, PathBuf};
 
-pub fn path_for_project(name: &str) -> PathBuf {
-    env::current_dir().unwrap().join("servers").join(name)
+use docker_compose_types::{Compose, Environment, Service, Services, SingleValue};
+use indexmap::indexmap;
+
+fn create_compose() -> Compose {
+    Compose {
+        services: Services(indexmap! {
+            "mc".to_string() => Some(Service {
+                image: Some("itzg/minecraft-server".to_string()),
+                environment: Environment::KvPair(indexmap! {
+                    "EULA".to_string() => Some(SingleValue::String("TRUE".to_string()))
+                }),
+                ..Default::default()
+            }),
+        }),
+        ..Default::default()
+    }
 }
 
-pub fn create_compose_project(name: &str) -> std::io::Result<()> {
-    let project_dir = path_for_project(name);
+fn path_for_project_in(base_dir: &Path, name: &str) -> PathBuf {
+    base_dir.join("servers").join(name)
+}
+
+fn create_compose_project_in(base_dir: &Path, name: &str) -> std::io::Result<()> {
+    let project_dir = path_for_project_in(base_dir, name);
     fs::create_dir_all(&project_dir)?;
 
     let compose_path = project_dir.join("compose.yml");
-    OpenOptions::new()
-        .create(true)
-        .write(true)
-        .append(true)
-        .open(compose_path)?;
+    let contents = serde_yaml::to_string(&create_compose())
+        .map_err(|err| std::io::Error::new(std::io::ErrorKind::Other, err))?;
+    fs::write(compose_path, contents)?;
 
     Ok(())
+}
+
+pub fn create_compose_project(name: &str) -> std::io::Result<()> {
+    let base_dir = env::current_dir()?;
+    create_compose_project_in(&base_dir, name)
 }
