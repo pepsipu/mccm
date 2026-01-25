@@ -8,7 +8,6 @@ mod routes;
 
 #[actix_web::main]
 async fn main() -> std::io::Result<()> {
-    std::fs::create_dir_all("servers")?;
     let docker = Docker::connect_with_local_defaults().expect("failed to create docker client");
 
     HttpServer::new(move || {

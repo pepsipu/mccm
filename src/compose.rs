@@ -1,5 +1,6 @@
 use std::env;
 use std::fs;
+use std::io;
 use std::path::{Path, PathBuf};
 
 use docker_compose_types::{Compose, Environment, Service, Services, SingleValue};
@@ -25,36 +26,29 @@ fn path_for_project_in(base_dir: &Path, name: &str) -> PathBuf {
     base_dir.join("servers").join(name)
 }
 
-fn create_compose_project_in(base_dir: &Path, name: &str) -> std::io::Result<()> {
+fn create_compose_project_in(base_dir: &Path, name: &str) -> io::Result<()> {
     let project_dir = path_for_project_in(base_dir, name);
     fs::create_dir_all(&project_dir)?;
 
     let compose_path = project_dir.join("compose.yml");
     let contents = serde_yaml::to_string(&create_compose(name))
-        .map_err(|err| std::io::Error::new(std::io::ErrorKind::Other, err))?;
+        .map_err(|err| io::Error::new(io::ErrorKind::Other, err))?;
     fs::write(compose_path, contents)?;
 
     Ok(())
 }
 
-pub fn create_compose_project(name: &str) -> std::io::Result<()> {
+pub fn create_compose_project(name: &str) -> io::Result<()> {
     let base_dir = env::current_dir()?;
     create_compose_project_in(&base_dir, name)
 }
 
-pub fn list_servers() -> std::io::Result<Vec<String>> {
-    let mut names = Vec::new();
-    for entry in fs::read_dir("servers")? {
-        let entry = entry?;
-        if !entry.file_type()?.is_dir() {
-            continue;
-        }
-
-        if entry.path().join("compose.yml").is_file() {
-            names.push(entry.file_name().to_string_lossy().into_owned());
-        }
+pub fn list_servers() -> io::Result<Vec<String>> {
+    match fs::read_dir("servers") {
+        Ok(entries) => entries
+            .map(|entry| entry.map(|e| e.file_name().to_string_lossy().into_owned()))
+            .collect::<io::Result<Vec<String>>>(),
+        Err(err) if err.kind() == io::ErrorKind::NotFound => Ok(vec![]),
+        Err(err) => Err(err),
     }
-
-    names.sort();
-    Ok(names)
 }
