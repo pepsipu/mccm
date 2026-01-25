@@ -40,6 +40,9 @@ a {
 .card {
   background: var(--surface);
   border: 1px solid var(--border);
+  display: flex;
+  align-items: center;
+  gap: 1rem;
   padding: 0.9rem 1.1rem;
   margin: 0.75rem 0;
   transition:
@@ -51,11 +54,23 @@ a {
     border-color: color-mix(in oklab, var(--border), var(--fg) 20%);
   }
 
-  & > div:first-child {
+  .card-body > div:first-child {
     font-weight: 600;
   }
 
-  & > div:last-child {
+  .card-body > div:last-child {
     opacity: 0.85;
   }
+}
+
+.server-icon {
+  width: 64px;
+  height: 64px;
+  flex: 0 0 64px;
+}
+
+.card-body {
+  display: flex;
+  flex-direction: column;
+  min-width: 0;
 }

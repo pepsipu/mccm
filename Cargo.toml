@@ -12,3 +12,5 @@ serde = { version = "1", features = ["derive"] }
 docker-compose-types = "0.22.0"
 indexmap = "2.13.0"
 serde_yaml = "0.9"
+futures-util = "0.3"
+tar = "0.4"
