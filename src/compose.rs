@@ -1,7 +1,7 @@
 use std::env;
 use std::fs;
 use std::io;
-use std::path::{Path, PathBuf};
+use std::path::Path;
 
 use docker_compose_types::{Compose, Environment, Service, Services, SingleValue};
 use indexmap::indexmap;
@@ -22,12 +22,8 @@ fn create_compose(name: &str) -> Compose {
     }
 }
 
-fn path_for_project_in(base_dir: &Path, name: &str) -> PathBuf {
-    base_dir.join("servers").join(name)
-}
-
 fn create_compose_project_in(base_dir: &Path, name: &str) -> io::Result<()> {
-    let project_dir = path_for_project_in(base_dir, name);
+    let project_dir = base_dir.join("servers").join(name);
     fs::create_dir_all(&project_dir)?;
 
     let compose_path = project_dir.join("compose.yml");
