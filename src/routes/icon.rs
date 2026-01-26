@@ -7,6 +7,7 @@ const DEFAULT_SERVER_ICON: &[u8] = include_bytes!("../../static/unknown_server.p
 
 use crate::manager::ServerManager;
 
+// TODO: we shouldn't load icons by container IDs since they can become stale
 #[get("/icon/{container_id}")]
 pub async fn server_icon(
     manager: Data<ServerManager>,

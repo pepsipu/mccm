@@ -16,7 +16,7 @@ pub fn page(body: Markup) -> Markup {
     }
 }
 
-pub fn card(name: &str, description: &str, icon_url: Option<&str>) -> Markup {
+pub fn server_card(name: &str, description: &str, icon_url: Option<&str>) -> Markup {
     html! {
         .card {
             @if let Some(icon_url) = icon_url {
@@ -37,7 +37,12 @@ pub fn card(name: &str, description: &str, icon_url: Option<&str>) -> Markup {
 pub fn create_server_card() -> Markup {
     html! {
         a href="/create" {
-            (card("Create server", "todo", None))
+            div class="card create-server-card" {
+                .card-body {
+                    div { "Create server" }
+                    div { "todo" }
+                }
+            }
         }
     }
 }
