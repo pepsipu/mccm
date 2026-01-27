@@ -7,13 +7,15 @@ mod components;
 mod compose;
 mod manager;
 mod routes;
+mod server;
 
 #[actix_web::main]
 async fn main() -> std::io::Result<()> {
+    let manager = Data::new(ServerManager::new());
+    ServerManager::spawn_background_worker(manager.clone());
     HttpServer::new(move || {
-        let manager = ServerManager::new();
         App::new()
-            .app_data(Data::new(manager))
+            .app_data(manager.clone())
             .service(Files::new("/static", "./static"))
             .configure(routes::configure)
     })

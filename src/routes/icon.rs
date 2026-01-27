@@ -1,22 +1,25 @@
 use actix_web::{
     HttpResponse, Result, get,
-    web::{Data, Path},
+    web::{Bytes, Data, Path},
 };
 
 const DEFAULT_SERVER_ICON: &[u8] = include_bytes!("../../static/unknown_server.png");
 
 use crate::manager::ServerManager;
 
-// TODO: we shouldn't load icons by container IDs since they can become stale
-#[get("/icon/{container_id}")]
+#[get("/icon/{server_name}")]
 pub async fn server_icon(
     manager: Data<ServerManager>,
-    container_id: Path<String>,
+    server_name: Path<String>,
 ) -> Result<HttpResponse> {
-    let container_id = container_id.into_inner();
-    let icon_bytes = match manager.download_server_icon(&container_id).await? {
-        Some(bytes) => bytes,
-        None => DEFAULT_SERVER_ICON.to_vec(),
+    let server_name = server_name.into_inner();
+    let record = manager.record(&server_name).await.ok_or_else(|| {
+        actix_web::error::ErrorNotFound(format!("server '{server_name}' not found"))
+    })?;
+
+    let icon_bytes = match record.icon_png() {
+        Some(icon_png) => Bytes::copy_from_slice(icon_png.as_slice()),
+        None => Bytes::from_static(DEFAULT_SERVER_ICON),
     };
 
     Ok(HttpResponse::Ok()
