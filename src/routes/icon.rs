@@ -15,10 +15,10 @@ pub async fn server_icon(
     let server_name = server_name.into_inner();
     let record = manager.record(&server_name).await;
 
-    let icon_bytes = match record.and_then(|r| r.icon_png().cloned()) {
-        Some(icon_png) => Bytes::from(icon_png),
-        None => Bytes::from_static(DEFAULT_SERVER_ICON),
-    };
+    let icon_bytes = record
+        .and_then(|r| r.icon_png)
+        .map(Bytes::from)
+        .unwrap_or(Bytes::from_static(DEFAULT_SERVER_ICON));
 
     Ok(HttpResponse::Ok()
         .content_type("image/png")

@@ -77,7 +77,11 @@ async fn refresh_state(docker: &Docker, manager: &ServerManager) -> Result<(), S
 
         next_state.insert(
             project,
-            ServerRecord::new(container_id, state, icon_png, properties),
+            ServerRecord {
+                state,
+                icon_png,
+                properties,
+            },
         );
     }
 
