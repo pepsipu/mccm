@@ -13,12 +13,10 @@ pub async fn server_icon(
     server_name: Path<String>,
 ) -> Result<HttpResponse> {
     let server_name = server_name.into_inner();
-    let record = manager.record(&server_name).await.ok_or_else(|| {
-        actix_web::error::ErrorNotFound(format!("server '{server_name}' not found"))
-    })?;
+    let record = manager.record(&server_name).await;
 
-    let icon_bytes = match record.icon_png() {
-        Some(icon_png) => Bytes::copy_from_slice(icon_png.as_slice()),
+    let icon_bytes = match record.and_then(|r| r.icon_png().cloned()) {
+        Some(icon_png) => Bytes::from(icon_png),
         None => Bytes::from_static(DEFAULT_SERVER_ICON),
     };
 

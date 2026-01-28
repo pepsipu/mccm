@@ -16,21 +16,17 @@ pub fn page(body: Markup) -> Markup {
     }
 }
 
-pub fn server_card(name: &str, state: &str, motd: Option<&str>, icon_url: Option<&str>) -> Markup {
+pub fn server_card(name: &str, state: &str, motd: &str, icon_url: &str) -> Markup {
     html! {
         .card {
-            @if let Some(icon_url) = icon_url {
-                img.server-icon
-                    src=(icon_url)
-                    width="64"
-                    height="64"
-                    alt="" {}
-            }
+            img.server-icon
+                src=(icon_url)
+                width="64"
+                height="64"
+                alt="" {}
             .card-body {
                 div { (name) }
-                @if let Some(motd) = motd {
-                    div { (motd) }
-                }
+                div { (motd) }
                 div { (state) }
             }
         }
