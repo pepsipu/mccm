@@ -63,26 +63,42 @@ a {
   }
 }
 
-.create-server-card {
-  border: 2px dashed var(--border);
-}
-
-.server-icon {
-  width: 64px;
-  height: 64px;
-  flex: 0 0 64px;
-}
-
 .card-body {
   display: flex;
   flex-direction: column;
   min-width: 0;
 }
 
+.server-card {
+  flex-direction: column;
+  align-items: stretch;
+
+  .server-card-header {
+    display: flex;
+    gap: 1rem;
+    align-items: baseline;
+    justify-content: space-between;
+    padding-bottom: 0.5rem;
+    border-bottom: 2px solid var(--border);
+  }
+
+  .server-card-content {
+    display: flex;
+    gap: 1rem;
+    align-items: flex-start;
+  }
+}
+
+.create-server-card {
+  border: 2px dashed var(--border);
+}
+
 .mc-motd {
   white-space: pre-line;
-  background: color-mix(in oklab, var(--fg), transparent 92%);
-  padding: 0.1rem 0.4rem;
+  line-height: 1.4;
+  font-family:
+    ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, "Liberation Mono",
+    "Courier New", monospace;
 
   .mc-bold {
     font-weight: 700;
