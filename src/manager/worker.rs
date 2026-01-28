@@ -63,7 +63,18 @@ async fn refresh_state(docker: &Docker, manager: &ServerManager) -> Result<(), S
             }
         };
 
-        next_state.insert(project, ServerRecord::new(container_id, state, icon_png));
+        let motd = match crate::server::download_server_motd(docker, &container_id).await {
+            Ok(motd) => motd,
+            Err(err) => {
+                eprintln!(
+                    "[mccm] motd refresh failed: {} ({}={})",
+                    err, PROJECT_LABEL_KEY, project
+                );
+                None
+            }
+        };
+
+        next_state.insert(project, ServerRecord::new(container_id, state, icon_png, motd));
     }
 
     *manager.records.write().await = next_state;

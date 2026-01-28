@@ -16,7 +16,7 @@ pub fn page(body: Markup) -> Markup {
     }
 }
 
-pub fn server_card(name: &str, description: &str, icon_url: Option<&str>) -> Markup {
+pub fn server_card(name: &str, state: &str, motd: Option<&str>, icon_url: Option<&str>) -> Markup {
     html! {
         .card {
             @if let Some(icon_url) = icon_url {
@@ -28,7 +28,10 @@ pub fn server_card(name: &str, description: &str, icon_url: Option<&str>) -> Mar
             }
             .card-body {
                 div { (name) }
-                div { (description) }
+                @if let Some(motd) = motd {
+                    div { (motd) }
+                }
+                div { (state) }
             }
         }
     }
