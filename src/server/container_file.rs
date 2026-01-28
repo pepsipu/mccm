@@ -13,7 +13,9 @@ pub async fn download_single_file_from_container(
     container_id: &str,
     path: &str,
 ) -> Result<Option<Vec<u8>>, ServerStateError> {
-    let options = DownloadFromContainerOptionsBuilder::new().path(path).build();
+    let options = DownloadFromContainerOptionsBuilder::new()
+        .path(path)
+        .build();
     let mut stream = docker.download_from_container(container_id, Some(options));
 
     let mut tar_bytes = Vec::new();

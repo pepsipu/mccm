@@ -1,13 +1,16 @@
 use bollard::Docker;
+use encoding_rs::UTF_8;
+use java_properties::PropertiesIter;
+use std::collections::HashMap;
 
 use crate::server::ServerStateError;
 
 const SERVER_PROPERTIES_PATH: &str = "/data/server.properties";
 
-pub async fn download_server_motd(
+pub async fn download_server_properties(
     docker: &Docker,
     container_id: &str,
-) -> Result<Option<String>, ServerStateError> {
+) -> Result<HashMap<String, String>, ServerStateError> {
     let Some(file_bytes) = super::container_file::download_single_file_from_container(
         docker,
         container_id,
@@ -15,11 +18,15 @@ pub async fn download_server_motd(
     )
     .await?
     else {
-        return Ok(None);
+        return Ok(HashMap::new());
     };
 
-    let props = java_properties::read(std::io::Cursor::new(file_bytes))
-        .map_err(|err| std::io::Error::new(std::io::ErrorKind::InvalidData, err))?;
+    let mut props = HashMap::new();
+    let mut iter = PropertiesIter::new_with_encoding(std::io::Cursor::new(file_bytes), UTF_8);
+    iter.read_into(|k, v| {
+        props.insert(k, v);
+    })
+    .map_err(|err| std::io::Error::new(std::io::ErrorKind::InvalidData, err))?;
 
-    Ok(props.get("motd").cloned())
+    Ok(props)
 }

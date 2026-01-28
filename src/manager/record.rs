@@ -1,9 +1,11 @@
+use std::collections::HashMap;
+
 #[derive(Clone, Debug)]
 pub struct ServerRecord {
     container_id: String,
     state: String,
     icon_png: Option<Vec<u8>>,
-    motd: Option<String>,
+    properties: HashMap<String, String>,
 }
 
 impl ServerRecord {
@@ -11,13 +13,13 @@ impl ServerRecord {
         container_id: String,
         state: String,
         icon_png: Option<Vec<u8>>,
-        motd: Option<String>,
+        properties: HashMap<String, String>,
     ) -> Self {
         Self {
             container_id,
             state,
             icon_png,
-            motd,
+            properties,
         }
     }
 
@@ -33,7 +35,7 @@ impl ServerRecord {
         self.icon_png.as_ref()
     }
 
-    pub fn motd(&self) -> Option<&str> {
-        self.motd.as_deref()
+    pub fn properties(&self) -> &HashMap<String, String> {
+        &self.properties
     }
 }

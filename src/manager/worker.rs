@@ -63,18 +63,22 @@ async fn refresh_state(docker: &Docker, manager: &ServerManager) -> Result<(), S
             }
         };
 
-        let motd = match crate::server::download_server_motd(docker, &container_id).await {
-            Ok(motd) => motd,
-            Err(err) => {
-                eprintln!(
-                    "[mccm] motd refresh failed: {} ({}={})",
-                    err, PROJECT_LABEL_KEY, project
-                );
-                None
-            }
-        };
+        let properties =
+            match crate::server::download_server_properties(docker, &container_id).await {
+                Ok(props) => props,
+                Err(err) => {
+                    eprintln!(
+                        "[mccm] properties refresh failed: {} ({}={})",
+                        err, PROJECT_LABEL_KEY, project
+                    );
+                    Default::default()
+                }
+            };
 
-        next_state.insert(project, ServerRecord::new(container_id, state, icon_png, motd));
+        next_state.insert(
+            project,
+            ServerRecord::new(container_id, state, icon_png, properties),
+        );
     }
 
     *manager.records.write().await = next_state;

@@ -1,5 +1,5 @@
-mod error;
 mod container_file;
+mod error;
 mod icon;
 mod list;
 mod properties;
@@ -11,4 +11,4 @@ pub use error::ServerStateError;
 pub use icon::download_server_icon;
 pub use list::ServerSummary;
 pub use list::list_servers;
-pub use properties::download_server_motd;
+pub use properties::download_server_properties;

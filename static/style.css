@@ -78,3 +78,29 @@ a {
   flex-direction: column;
   min-width: 0;
 }
+
+.mc-motd {
+  white-space: pre-line;
+  background: color-mix(in oklab, var(--fg), transparent 92%);
+  padding: 0.1rem 0.4rem;
+}
+
+.mc-bold {
+  font-weight: 700;
+}
+
+.mc-italic {
+  font-style: italic;
+}
+
+.mc-underlined {
+  text-decoration: underline;
+}
+
+.mc-strikethrough {
+  text-decoration: line-through;
+}
+
+.mc-underlined.mc-strikethrough {
+  text-decoration: underline line-through;
+}

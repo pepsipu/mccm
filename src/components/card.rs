@@ -1,22 +1,8 @@
-use maud::{DOCTYPE, Markup, html};
+use maud::{Markup, html};
 
-pub fn page(body: Markup) -> Markup {
-    html! {
-        (DOCTYPE)
-        html {
-            head {
-                script src="/static/htmx.min.js" {}
-                link rel="stylesheet" href="/static/style.css" {}
-            }
-            body {
-                h1 { "mccm" }
-                (body)
-            }
-        }
-    }
-}
+use super::motd;
 
-pub fn server_card(name: &str, state: &str, motd: &str, icon_url: &str) -> Markup {
+pub fn server_card(name: &str, state: &str, motd_text: &str, icon_url: &str) -> Markup {
     html! {
         .card {
             img.server-icon
@@ -26,7 +12,7 @@ pub fn server_card(name: &str, state: &str, motd: &str, icon_url: &str) -> Marku
                 alt="" {}
             .card-body {
                 div { (name) }
-                div { (motd) }
+                div class="mc-motd" { (motd::render_motd(motd_text)) }
                 div { (state) }
             }
         }
