@@ -2,7 +2,10 @@ use maud::{Markup, html};
 use mctext::{MCText, Span, TextColor};
 
 fn color_style(color: TextColor) -> String {
-    format!("color: {}", color.to_hex())
+    match color {
+        TextColor::Named(named) => format!("color: var(--mc-{});", named.name()),
+        TextColor::Rgb { .. } => format!("color: {};", color.to_hex()),
+    }
 }
 
 fn classes_for_span(span: &Span) -> String {

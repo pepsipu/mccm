@@ -1,3 +1,5 @@
+@import url("https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:wght@400;500;700&display=swap");
+
 :root {
   color-scheme: light dark;
 
@@ -97,8 +99,48 @@ a {
   white-space: pre-line;
   line-height: 1.4;
   font-family:
-    ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, "Liberation Mono",
-    "Courier New", monospace;
+    "IBM Plex Mono", ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas,
+    "Liberation Mono", "Courier New", monospace;
+
+  /* One Half Light */
+  --mc-black: #383a42;
+  --mc-dark_red: #e45649;
+  --mc-dark_green: #50a14f;
+  --mc-gold: #c18401;
+  --mc-dark_blue: #0184bc;
+  --mc-dark_purple: #a626a4;
+  --mc-dark_aqua: #0997b3;
+  --mc-gray: #fafafa;
+
+  --mc-dark_gray: #4f525e;
+  --mc-red: #e06c75;
+  --mc-green: #98c379;
+  --mc-yellow: #e5c07b;
+  --mc-blue: #61afef;
+  --mc-light_purple: #c678dd;
+  --mc-aqua: #56b6c2;
+  --mc-white: #ffffff;
+
+  @media (prefers-color-scheme: dark) {
+    /* One Half Dark */
+    --mc-black: #282c34;
+    --mc-dark_red: #e06c75;
+    --mc-dark_green: #98c379;
+    --mc-gold: #e5c07b;
+    --mc-dark_blue: #61afef;
+    --mc-dark_purple: #c678dd;
+    --mc-dark_aqua: #56b6c2;
+    --mc-gray: #dcdfe4;
+
+    --mc-dark_gray: #282c34;
+    --mc-red: #e06c75;
+    --mc-green: #98c379;
+    --mc-yellow: #e5c07b;
+    --mc-blue: #61afef;
+    --mc-light_purple: #c678dd;
+    --mc-aqua: #56b6c2;
+    --mc-white: #dcdfe4;
+  }
 
   .mc-bold {
     font-weight: 700;
