@@ -98,9 +98,7 @@ a {
 .mc-motd {
   white-space: pre-line;
   line-height: 1.4;
-  font-family:
-    "IBM Plex Mono", ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas,
-    "Liberation Mono", "Courier New", monospace;
+  font-family: monospace;
 
   /* One Half Light */
   --mc-black: #383a42;
