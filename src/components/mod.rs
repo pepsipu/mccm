@@ -3,7 +3,18 @@ use maud::{DOCTYPE, Markup, html};
 pub mod card;
 pub mod motd;
 
-pub use card::{create_server_card, server_card};
+pub use card::server_card;
+
+pub fn header() -> Markup {
+    html! {
+        div class="header" {
+            h1 { "mccm" }
+            nav {
+                a href="/create" { "create" }
+            }
+        }
+    }
+}
 
 pub fn page(body: Markup) -> Markup {
     html! {
@@ -14,7 +25,7 @@ pub fn page(body: Markup) -> Markup {
                 link rel="stylesheet" href="/static/style.css" {}
             }
             body {
-                h1 { "mccm" }
+                (header())
                 (body)
             }
         }

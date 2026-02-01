@@ -18,6 +18,5 @@ pub async fn home(manager: Data<ServerManager>) -> Result<Markup> {
             @let icon_url = format!("/icon/{}", name);
             (components::server_card(name.as_str(), state, motd, &icon_url))
         }
-        (components::create_server_card())
     }))
 }
