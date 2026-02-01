@@ -3,7 +3,6 @@ mod worker;
 
 use std::collections::HashMap;
 
-use actix_web::web::Data;
 use bollard::Docker;
 use tokio::sync::RwLock;
 
@@ -22,10 +21,6 @@ impl ServerManager {
         }
     }
 
-    pub fn spawn_background_worker(manager: Data<Self>) {
-        worker::spawn(manager);
-    }
-
     pub async fn record(&self, server_name: &str) -> Option<ServerRecord> {
         self.records.read().await.get(server_name).cloned()
     }
@@ -34,3 +29,5 @@ impl ServerManager {
         self.records.read().await.clone()
     }
 }
+
+pub use worker::spawn;

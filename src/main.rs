@@ -12,7 +12,7 @@ mod server;
 #[actix_web::main]
 async fn main() -> std::io::Result<()> {
     let manager = Data::new(ServerManager::new());
-    ServerManager::spawn_background_worker(manager.clone());
+    manager::spawn(manager.clone());
     HttpServer::new(move || {
         App::new()
             .app_data(manager.clone())
