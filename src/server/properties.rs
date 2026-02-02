@@ -17,11 +17,11 @@ pub async fn download_server_properties(
     };
 
     let mut props = HashMap::new();
+    // TODO: minecraft 1.20+ writes property files as UTF-8, but older server.properties may need to be parsed as ISO-8859-1
     let mut iter = PropertiesIter::new_with_encoding(std::io::Cursor::new(file_bytes), UTF_8);
     iter.read_into(|k, v| {
         props.insert(k, v);
-    })
-    .map_err(|err| std::io::Error::new(std::io::ErrorKind::InvalidData, err))?;
+    })?;
 
     Ok(props)
 }

@@ -32,7 +32,7 @@ pub async fn download_file_from_container(
     Ok(read_tar_single_file(&tar_bytes)?)
 }
 
-fn read_tar_single_file(tar_bytes: &[u8]) -> std::io::Result<Option<Vec<u8>>> {
+fn read_tar_single_file(tar_bytes: &[u8]) -> anyhow::Result<Option<Vec<u8>>> {
     let mut archive = Archive::new(std::io::Cursor::new(tar_bytes));
     let mut entries = archive.entries()?;
 

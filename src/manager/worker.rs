@@ -14,6 +14,7 @@ pub fn spawn(manager: Data<ServerManager>) {
 async fn run(manager: Data<ServerManager>) {
     let docker = &manager.docker;
 
+    // TODO: we should move docker event streaming logic to the server module for readability
     let mut filters = HashMap::new();
     filters.insert("type", vec!["container".to_string()]);
     filters.insert("image", vec![MINECRAFT_SERVER_IMAGE.to_string()]);
