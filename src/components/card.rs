@@ -7,7 +7,7 @@ pub fn server_card(name: &str, state: &str, motd_text: &str, icon_url: &str) -> 
         .card {
             img
                 src=(icon_url)
-                alt="" {}
+                alt="server icon" {}
             .card-body {
                 span {
                     strong { (name) }

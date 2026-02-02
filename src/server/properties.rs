@@ -11,12 +11,9 @@ pub async fn download_server_properties(
     docker: &Docker,
     container_id: &str,
 ) -> Result<HashMap<String, String>, ServerStateError> {
-    let Some(file_bytes) = super::container_file::download_single_file_from_container(
-        docker,
-        container_id,
-        SERVER_PROPERTIES_PATH,
-    )
-    .await?
+    let Some(file_bytes) =
+        super::file::download_file_from_container(docker, container_id, SERVER_PROPERTIES_PATH)
+            .await?
     else {
         return Ok(HashMap::new());
     };

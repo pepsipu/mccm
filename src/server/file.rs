@@ -8,7 +8,7 @@ use tar::Archive;
 
 use crate::server::ServerStateError;
 
-pub async fn download_single_file_from_container(
+pub async fn download_file_from_container(
     docker: &Docker,
     container_id: &str,
     path: &str,
@@ -38,11 +38,11 @@ fn read_tar_single_file(tar_bytes: &[u8]) -> std::io::Result<Option<Vec<u8>>> {
     let mut archive = Archive::new(std::io::Cursor::new(tar_bytes));
     let mut entries = archive.entries()?;
 
-    if let Some(entry) = entries.next() {
-        let mut out = Vec::new();
-        entry?.read_to_end(&mut out)?;
-        return Ok(Some(out));
-    }
+    let Some(entry) = entries.next() else {
+        return Ok(None);
+    };
 
-    Ok(None)
+    let mut out = Vec::new();
+    entry?.read_to_end(&mut out)?;
+    return Ok(Some(out));
 }

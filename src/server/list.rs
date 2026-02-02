@@ -20,8 +20,7 @@ pub async fn list_servers(docker: &Docker) -> Result<Vec<ServerSummary>, ServerS
 async fn list_container_summaries(
     docker: &Docker,
 ) -> Result<Vec<ContainerSummary>, ServerStateError> {
-    let mut filters = HashMap::new();
-    filters.insert("ancestor", vec![MINECRAFT_SERVER_IMAGE.to_string()]);
+    let filters = HashMap::from([("ancestor", vec![MINECRAFT_SERVER_IMAGE.to_string()])]);
 
     Ok(docker
         .list_containers(Some(
