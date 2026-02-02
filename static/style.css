@@ -20,7 +20,6 @@ body {
   color: var(--fg);
   font-family:
     -apple-system, BlinkMacSystemFont, Roboto, Helvetica, Arial, sans-serif;
-  line-height: 1.8;
   max-width: 73%;
 }
 
@@ -56,11 +55,17 @@ a {
   &:hover {
     border-color: color-mix(in oklab, var(--border), var(--fg) 20%);
   }
+
+  .card-body {
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
+    align-self: stretch;
+  }
 }
 
 .mc-motd {
   white-space: pre-line;
-  line-height: 1.2;
   font-family: monospace;
 
   .mc-bold {

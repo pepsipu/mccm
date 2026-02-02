@@ -5,13 +5,11 @@ use super::motd;
 pub fn server_card(name: &str, state: &str, motd_text: &str, icon_url: &str) -> Markup {
     html! {
         .card {
-            img.server-icon
+            img
                 src=(icon_url)
-                width="64"
-                height="64"
                 alt="" {}
-            div {
-                div {
+            .card-body {
+                span {
                     strong { (name) }
                     span { " " (state) }
                 }
