@@ -18,7 +18,7 @@ pub fn render_motd(motd: &str) -> Markup {
                 .mc-strikethrough[span.style.strikethrough]
                 style=[span.color.map(color_style)]
             {
-                (&span.text)
+                (span.text)
             }
         }
     }

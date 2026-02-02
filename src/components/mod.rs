@@ -7,8 +7,10 @@ pub use card::server_card;
 
 pub fn header() -> Markup {
     html! {
-        div class="header" {
-            h1 { "mccm" }
+        .header {
+            h1 {
+                a .home-link href="/" { "mccm" }
+            }
             nav {
                 a href="/create" { "create" }
             }
