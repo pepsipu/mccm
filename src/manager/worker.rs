@@ -5,7 +5,7 @@ use bollard::{Docker, query_parameters::EventsOptionsBuilder};
 use futures_util::StreamExt;
 
 use crate::manager::{ServerManager, ServerRecord};
-use crate::server::{MINECRAFT_SERVER_IMAGE, PROJECT_LABEL_KEY, ServerStateError};
+use crate::server::{MINECRAFT_SERVER_IMAGE, PROJECT_LABEL_KEY};
 
 pub fn spawn(manager: Data<ServerManager>) {
     actix_web::rt::spawn(async move { run(manager).await });
@@ -41,7 +41,7 @@ async fn refresh_logged(docker: &Docker, manager: &ServerManager) {
     }
 }
 
-async fn refresh_state(docker: &Docker, manager: &ServerManager) -> Result<(), ServerStateError> {
+async fn refresh_state(docker: &Docker, manager: &ServerManager) -> anyhow::Result<()> {
     let containers = crate::server::list_servers(docker).await?;
 
     let mut next_state = HashMap::new();

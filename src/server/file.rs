@@ -6,13 +6,11 @@ use bollard::query_parameters::DownloadFromContainerOptionsBuilder;
 use futures_util::StreamExt;
 use tar::Archive;
 
-use crate::server::ServerStateError;
-
 pub async fn download_file_from_container(
     docker: &Docker,
     container_id: &str,
     path: &str,
-) -> Result<Option<Vec<u8>>, ServerStateError> {
+) -> anyhow::Result<Option<Vec<u8>>> {
     let options = DownloadFromContainerOptionsBuilder::new()
         .path(path)
         .build();
@@ -27,7 +25,7 @@ pub async fn download_file_from_container(
             }) => {
                 return Ok(None);
             }
-            Err(err) => return Err(ServerStateError::Docker(err)),
+            Err(err) => return Err(err.into()),
         }
     }
 

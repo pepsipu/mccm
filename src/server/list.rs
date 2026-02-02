@@ -4,7 +4,7 @@ use bollard::Docker;
 use bollard::models::ContainerSummary;
 use bollard::query_parameters::ListContainersOptionsBuilder;
 
-use crate::server::{MINECRAFT_SERVER_IMAGE, PROJECT_LABEL_KEY, ServerStateError};
+use crate::server::{MINECRAFT_SERVER_IMAGE, PROJECT_LABEL_KEY};
 
 pub struct ServerSummary {
     pub project: String,
@@ -12,14 +12,14 @@ pub struct ServerSummary {
     pub state: String,
 }
 
-pub async fn list_servers(docker: &Docker) -> Result<Vec<ServerSummary>, ServerStateError> {
+pub async fn list_servers(docker: &Docker) -> anyhow::Result<Vec<ServerSummary>> {
     let containers = list_container_summaries(docker).await?;
     Ok(containers.into_iter().filter_map(extract_summary).collect())
 }
 
 async fn list_container_summaries(
     docker: &Docker,
-) -> Result<Vec<ContainerSummary>, ServerStateError> {
+) -> anyhow::Result<Vec<ContainerSummary>> {
     let filters = HashMap::from([("ancestor", vec![MINECRAFT_SERVER_IMAGE.to_string()])]);
 
     Ok(docker
