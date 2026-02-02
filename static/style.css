@@ -4,14 +4,12 @@
   --bg: #ffffff;
   --fg: #171717;
   --surface: #fafafa;
-  --card: #ffffff;
   --border: #e5e5e5;
 
   @media (prefers-color-scheme: dark) {
     --bg: #0a0a0a;
     --fg: #fafafa;
     --surface: #171717;
-    --card: #0a0a0a;
     --border: #262626;
   }
 }
@@ -22,7 +20,6 @@ body {
   color: var(--fg);
   font-family:
     -apple-system, BlinkMacSystemFont, Roboto, Helvetica, Arial, sans-serif;
-  font-size: 16px;
   line-height: 1.8;
   max-width: 73%;
 }
@@ -63,7 +60,7 @@ a {
 
 .mc-motd {
   white-space: pre-line;
-  line-height: 1.4;
+  line-height: 1.2;
   font-family: monospace;
 
   .mc-bold {

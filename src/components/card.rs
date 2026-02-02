@@ -13,7 +13,7 @@ pub fn server_card(name: &str, state: &str, motd_text: &str, icon_url: &str) -> 
             div {
                 div {
                     strong { (name) }
-                    span { (state) }
+                    span { " " (state) }
                 }
                 .mc-motd { (motd::render_motd(motd_text)) }
             }
