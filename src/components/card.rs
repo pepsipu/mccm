@@ -11,7 +11,7 @@ pub fn server_card(name: &str, state: &str, motd_text: &str, icon_url: &str) -> 
                 height="64"
                 alt="" {}
             div {
-                .server-card-header {
+                div {
                     strong { (name) }
                     span { (state) }
                 }
