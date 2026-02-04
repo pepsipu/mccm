@@ -4,6 +4,12 @@ manage your minecraft servers easily with mccm!
 
 ![screenshot of server list](./screenshot.png)
 
+todo:
+
+- support modifying mc-router
+- support backup configuration
+- server display (rcon, docker compose logs)
+
 ## why make another minecraft container manager?
 
 minecraft server managers like [pterodactyl](https://pterodactyl.io/) and [pufferpanel](https://pufferpanel.com/) aren't half as flexible, convenient, or feature complete as a docker compose file with [itzg's minecraft container](https://github.com/itzg/docker-minecraft-server). the tooling around around itzg's container is really best-in-class: [easy mod and plugin management](https://docker-minecraft-server.readthedocs.io/en/latest/mods-and-plugins/), [server routers](https://github.com/itzg/mc-router), [monitors](https://github.com/itzg/mc-monitor), [server proxies](https://github.com/itzg/docker-mc-proxy), [backups](https://github.com/itzg/docker-mc-backup), and more.

@@ -1,21 +1,19 @@
 use actix_files::Files;
 use actix_web::{App, HttpServer, web::Data};
-
-use crate::manager::ServerManager;
+use bollard::Docker;
 
 mod components;
 mod compose;
-mod manager;
 mod routes;
 mod server;
 
 #[actix_web::main]
 async fn main() -> std::io::Result<()> {
-    let manager = Data::new(ServerManager::new());
-    manager::spawn(manager.clone());
+    let docker =
+        Data::new(Docker::connect_with_defaults().expect("failed to create docker connection"));
     HttpServer::new(move || {
         App::new()
-            .app_data(manager.clone())
+            .app_data(docker.clone())
             .service(Files::new("/static", "./static"))
             .configure(routes::configure)
     })
