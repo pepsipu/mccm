@@ -1,8 +1,12 @@
 use maud::{Markup, html};
 
-pub fn server_card(name: &str, state: &str, icon_url: &str, motd_url: &str) -> Markup {
+pub fn server_card(name: &str, state: &str) -> Markup {
+    let server_page = format!("/server/{}", name);
+    let icon_url = format!("{}/icon", server_page);
+    let motd_url = format!("{}/motd", server_page);
+
     html! {
-        .card {
+        a .card href=(server_page) {
             img
                 src=(icon_url)
                 width="64px"

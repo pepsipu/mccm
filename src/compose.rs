@@ -1,8 +1,7 @@
-use std::env;
-use std::fs;
-use std::io;
-use std::path::Path;
+use std::path::PathBuf;
+use std::{env, fs};
 
+use anyhow::Result;
 use docker_compose_types::{Compose, Environment, Service, Services, SingleValue};
 use indexmap::indexmap;
 
@@ -22,29 +21,37 @@ fn create_compose(name: &str) -> Compose {
     }
 }
 
-fn create_compose_project_in(base_dir: &Path, name: &str) -> io::Result<()> {
-    let project_dir = base_dir.join("servers").join(name);
-    fs::create_dir_all(&project_dir)?;
+fn compose_path(server_name: &str) -> Result<PathBuf> {
+    Ok(env::current_dir()?
+        .join("servers")
+        .join(server_name)
+        .join("compose.yml"))
+}
 
-    let compose_path = project_dir.join("compose.yml");
-    let contents = serde_yaml::to_string(&create_compose(name))
-        .map_err(|err| io::Error::new(io::ErrorKind::Other, err))?;
-    fs::write(compose_path, contents)?;
-
+pub fn create_compose_project(name: &str) -> Result<()> {
+    let path = compose_path(name)?;
+    fs::create_dir_all(path.parent().unwrap())?;
+    fs::write(path, serde_yaml::to_string(&create_compose(name))?)?;
     Ok(())
 }
 
-pub fn create_compose_project(name: &str) -> io::Result<()> {
-    let base_dir = env::current_dir()?;
-    create_compose_project_in(&base_dir, name)
+pub fn read_compose_project(server_name: &str) -> Result<Compose> {
+    let contents = fs::read_to_string(compose_path(server_name)?)?;
+    Ok(serde_yaml::from_str(&contents)?)
 }
 
-pub fn list_servers() -> io::Result<Vec<String>> {
-    match fs::read_dir("servers") {
+pub fn write_compose_project(server_name: &str, compose: &Compose) -> Result<()> {
+    fs::write(compose_path(server_name)?, serde_yaml::to_string(compose)?)?;
+    Ok(())
+}
+
+pub fn list_servers() -> Result<Vec<String>> {
+    Ok(match fs::read_dir("servers") {
         Ok(entries) => entries
-            .map(|entry| entry.map(|e| e.file_name().to_string_lossy().into_owned()))
-            .collect::<io::Result<Vec<String>>>(),
-        Err(err) if err.kind() == io::ErrorKind::NotFound => Ok(vec![]),
-        Err(err) => Err(err),
-    }
+            .filter_map(|e| e.ok())
+            .map(|e| e.file_name().to_string_lossy().into_owned())
+            .collect(),
+        Err(e) if e.kind() == std::io::ErrorKind::NotFound => vec![],
+        Err(e) => return Err(e.into()),
+    })
 }

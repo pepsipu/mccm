@@ -9,10 +9,10 @@ pub fn header() -> Markup {
     html! {
         .header {
             h1 {
-                a .home-link href="/" { "mccm" }
+                a href="/" { "mccm" }
             }
             nav {
-                a href="/create" { "create" }
+                a .link href="/create" { "create" }
             }
         }
     }

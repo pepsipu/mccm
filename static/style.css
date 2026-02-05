@@ -24,12 +24,15 @@ body {
 }
 
 a {
-  border-bottom: 1px solid currentColor;
   color: var(--fg);
   text-decoration: none;
 
-  &:hover {
-    border-bottom: 0;
+  &.link {
+    border-bottom: 1px solid currentColor;
+
+    &:hover {
+      border-bottom: 0;
+    }
   }
 }
 
@@ -37,10 +40,6 @@ a {
   display: flex;
   justify-content: space-between;
   align-items: center;
-
-  .home-link {
-    border-bottom: 0;
-  }
 }
 
 .card {

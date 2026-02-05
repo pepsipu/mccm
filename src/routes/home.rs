@@ -20,9 +20,7 @@ pub async fn home(docker: Data<Docker>) -> Result<Markup> {
     Ok(components::page(html! {
         @for name in servers {
             @let state = docker_servers.get(&name).map(String::as_str).unwrap_or(NOT_CREATED);
-            @let icon_url = format!("/server/{}/icon", name);
-            @let motd_url = format!("/server/{}/motd", name);
-            (components::server_card(name.as_str(), state, &icon_url, &motd_url))
+            (components::server_card(name.as_str(), state))
         }
     }))
 }
