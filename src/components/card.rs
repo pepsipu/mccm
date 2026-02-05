@@ -1,8 +1,6 @@
 use maud::{Markup, html};
 
-use super::motd;
-
-pub fn server_card(name: &str, state: &str, motd_text: &str, icon_url: &str) -> Markup {
+pub fn server_card(name: &str, state: &str, icon_url: &str, motd_url: &str) -> Markup {
     html! {
         .card {
             img
@@ -14,7 +12,11 @@ pub fn server_card(name: &str, state: &str, motd_text: &str, icon_url: &str) -> 
                     strong { (name) }
                     span { " " (state) }
                 }
-                .mc-motd { (motd::render_motd(motd_text)) }
+                .mc-motd
+                    hx-get=(motd_url)
+                    hx-trigger="load"
+                    hx-swap="innerHTML"
+                {}
             }
         }
     }
