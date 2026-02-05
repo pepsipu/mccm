@@ -33,11 +33,13 @@ fn env_pairs(env: &Environment) -> Vec<(String, String)> {
             .collect(),
     }
 }
+
 #[derive(Debug, Deserialize)]
 struct EnvForm {
     key: Vec<String>,
     value: Vec<String>,
 }
+
 #[get("/{server_name:[A-Za-z0-9_-]+}")]
 async fn server_page(server_name: Path<String>) -> Result<Markup> {
     let server_name = server_name.into_inner();
@@ -64,6 +66,7 @@ async fn server_page(server_name: Path<String>) -> Result<Markup> {
     }))
 }
 #[post("/{server_name:[A-Za-z0-9_-]+}")]
+
 async fn save_server_page(
     server_name: Path<String>,
     form: QsForm<EnvForm>,
@@ -94,6 +97,7 @@ async fn save_server_page(
         .insert_header((header::LOCATION, format!("/server/{server_name}")))
         .finish())
 }
+
 pub fn configure(cfg: &mut actix_web::web::ServiceConfig) {
     cfg.service(server_page).service(save_server_page);
 }
