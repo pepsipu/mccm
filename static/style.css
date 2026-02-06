@@ -5,6 +5,7 @@
   --fg: #171717;
   --surface: #fafafa;
   --border: #e5e5e5;
+  --border-hover: color-mix(in oklab, var(--border), var(--fg) 20%);
 
   @media (prefers-color-scheme: dark) {
     --bg: #0a0a0a;
@@ -56,7 +57,7 @@ a {
     border-color 120ms ease;
 
   &:hover {
-    border-color: color-mix(in oklab, var(--border), var(--fg) 20%);
+    border-color: var(--border-hover);
   }
 
   .card-body {
@@ -96,6 +97,24 @@ a {
   display: flex;
   flex-direction: column;
   gap: 0.5rem;
+
+  input,
+  button {
+    font: inherit;
+    padding: 0.45rem 0.6rem;
+    background: var(--surface);
+    color: var(--fg);
+    border: 2px solid var(--border);
+  }
+
+  button {
+    cursor: pointer;
+  }
+
+  input:focus-visible,
+  button:focus-visible {
+    outline: 2px solid var(--border-hover);
+  }
 
   .env-row {
     display: flex;
