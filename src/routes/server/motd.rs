@@ -12,7 +12,7 @@ const DEFAULT_MOTD: &str = "A Minecraft server";
 #[get("/{server_name}/motd")]
 async fn server_motd(docker: Data<Docker>, server_name: Path<String>) -> Result<Markup> {
     let server_name = server_name.into_inner();
-    let motd = match super::container_id_for_project(&docker, &server_name).await {
+    let motd = match super::container_id_for_server(&docker, &server_name).await {
         Some(container_id) => server::download_server_properties(&docker, &container_id)
             .await
             .unwrap_or_default()

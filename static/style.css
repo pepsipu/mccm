@@ -91,3 +91,22 @@ a {
     text-decoration: underline line-through;
   }
 }
+
+.env-editor {
+  display: flex;
+  flex-direction: column;
+  gap: 0.5rem;
+
+  .env-row {
+    display: flex;
+    gap: 0.5rem;
+
+    input.env-key {
+      flex: 0 0 14rem;
+    }
+
+    input {
+      flex: 1;
+    }
+  }
+}

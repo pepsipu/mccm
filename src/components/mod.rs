@@ -1,9 +1,11 @@
 use maud::{DOCTYPE, Markup, html};
 
 pub mod card;
+pub mod env_editor;
 pub mod motd;
 
 pub use card::server_card;
+pub use env_editor::env_editor;
 
 pub fn header() -> Markup {
     html! {

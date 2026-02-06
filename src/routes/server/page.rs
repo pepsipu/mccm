@@ -1,12 +1,13 @@
-use crate::{components, compose};
+use crate::{components, compose, server};
 use actix_web::{
     HttpResponse, Result,
     error::{ErrorInternalServerError, ErrorNotFound},
     get,
     http::header,
     post,
-    web::Path,
+    web::{Data, Path},
 };
+use bollard::Docker;
 use docker_compose_types::{Environment, SingleValue};
 use indexmap::IndexMap;
 use maud::{Markup, html};
@@ -41,7 +42,7 @@ struct EnvForm {
 }
 
 #[get("/{server_name:[A-Za-z0-9_-]+}")]
-async fn server_page(server_name: Path<String>) -> Result<Markup> {
+async fn server_page(docker: Data<Docker>, server_name: Path<String>) -> Result<Markup> {
     let server_name = server_name.into_inner();
     let compose = compose::read_compose_project(&server_name).map_err(ErrorInternalServerError)?;
     let env = compose
@@ -52,21 +53,19 @@ async fn server_page(server_name: Path<String>) -> Result<Markup> {
         .map(|service| &service.environment)
         .ok_or_else(|| ErrorNotFound("mc service not found"))?;
     let env = env_pairs(env);
-    let action = format!("/server/{server_name}");
+
+    let state = server::get_server(&docker, &server_name)
+        .await
+        .map_err(ErrorInternalServerError)?
+        .map(|s| s.state)
+        .unwrap_or_default();
+
     Ok(components::page(html! {
-        h2 { (server_name) }
-        form method="post" action=(action) {
-            @for (key, value) in env {
-                div {
-                    input type="text" name="key[]" value=(key) {} textarea name="value[]" { (value) }
-                }
-            }
-            div { input type="text" name="key[]" {} textarea name="value[]" {} } button type="submit" { "Save" }
-        }
+        (components::server_card(&server_name, &state))
+        (components::env_editor(&server_name, &env))
     }))
 }
 #[post("/{server_name:[A-Za-z0-9_-]+}")]
-
 async fn save_server_page(
     server_name: Path<String>,
     form: QsForm<EnvForm>,

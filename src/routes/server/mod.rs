@@ -7,12 +7,12 @@ mod icon;
 mod motd;
 mod page;
 
-async fn container_id_for_project(docker: &Docker, project: &str) -> Option<String> {
-    let servers = server::list_servers(docker).await.ok()?;
-    servers
-        .into_iter()
-        .find(|s| s.project == project)
-        .map(|s| s.id)
+async fn container_id_for_server(docker: &Docker, server_name: &str) -> Option<String> {
+    server::get_server(docker, server_name)
+        .await
+        .ok()
+        .flatten()
+        .and_then(|s| s.container_id)
 }
 
 pub fn configure(cfg: &mut web::ServiceConfig) {
