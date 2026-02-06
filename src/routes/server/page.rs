@@ -41,7 +41,7 @@ struct EnvForm {
     value: Vec<String>,
 }
 
-#[get("/{server_name:[A-Za-z0-9_-]+}")]
+#[get("/{server_name}")]
 async fn server_page(docker: Data<Docker>, server_name: Path<String>) -> Result<Markup> {
     let server_name = server_name.into_inner();
     let compose = compose::read_compose_project(&server_name).map_err(ErrorInternalServerError)?;
@@ -65,7 +65,7 @@ async fn server_page(docker: Data<Docker>, server_name: Path<String>) -> Result<
         (components::env_editor(&server_name, &env))
     }))
 }
-#[post("/{server_name:[A-Za-z0-9_-]+}")]
+#[post("/{server_name}")]
 async fn save_server_page(
     server_name: Path<String>,
     form: QsForm<EnvForm>,
@@ -81,10 +81,6 @@ async fn save_server_page(
         .ok_or_else(|| ErrorNotFound("mc service not found"))?;
     let mut env = IndexMap::new();
     for (key, value) in form.key.iter().zip(form.value.iter()) {
-        let key = key.trim();
-        if key.is_empty() {
-            continue;
-        }
         env.insert(
             key.to_string(),
             Some(SingleValue::String(value.to_string())),

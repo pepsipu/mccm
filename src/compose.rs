@@ -21,11 +21,21 @@ fn create_compose(name: &str) -> Compose {
     }
 }
 
+fn join_segment(mut base: PathBuf, seg: &str) -> Result<PathBuf> {
+    use std::path::{Component, Path};
+
+    let mut it = Path::new(seg).components();
+    match (it.next(), it.next()) {
+        (Some(Component::Normal(_)), None) => {
+            base.push(seg);
+            Ok(base)
+        }
+        _ => anyhow::bail!("invalid path segment"),
+    }
+}
+
 fn compose_path(server_name: &str) -> Result<PathBuf> {
-    Ok(env::current_dir()?
-        .join("servers")
-        .join(server_name)
-        .join("compose.yml"))
+    Ok(join_segment(env::current_dir()?.join("servers"), server_name)?.join("compose.yml"))
 }
 
 pub fn create_compose_project(name: &str) -> Result<()> {
