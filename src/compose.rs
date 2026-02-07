@@ -5,6 +5,18 @@ use anyhow::Result;
 use docker_compose_types::{Compose, Environment, Service, Services, SingleValue};
 use indexmap::indexmap;
 
+pub fn mc_service(compose: &Compose) -> Option<&Service> {
+    compose.services.0.get("mc").and_then(|svc| svc.as_ref())
+}
+
+pub fn mc_service_mut(compose: &mut Compose) -> Option<&mut Service> {
+    compose
+        .services
+        .0
+        .get_mut("mc")
+        .and_then(|svc| svc.as_mut())
+}
+
 fn create_compose(name: &str) -> Compose {
     Compose {
         name: Some(name.to_string()),
