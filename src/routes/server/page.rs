@@ -81,6 +81,9 @@ async fn save_server_page(
         .ok_or_else(|| ErrorNotFound("mc service not found"))?;
     let mut env = IndexMap::new();
     for (key, value) in form.key.iter().zip(form.value.iter()) {
+        if key.is_empty() {
+            continue;
+        }
         env.insert(
             key.to_string(),
             Some(SingleValue::String(value.to_string())),
