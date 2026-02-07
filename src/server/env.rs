@@ -3,7 +3,7 @@ use indexmap::IndexMap;
 
 use crate::compose;
 
-pub fn mc_env(server_name: &str) -> anyhow::Result<IndexMap<String, String>> {
+pub fn read_mc_env(server_name: &str) -> anyhow::Result<IndexMap<String, String>> {
     let compose = compose::read_compose_project(server_name)?;
     let service = compose
         .services
