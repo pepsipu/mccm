@@ -65,8 +65,8 @@ async fn server_page(docker: Data<Docker>, server_name: Path<String>) -> Result<
         (components::env_editor(&server_name, &env))
     }))
 }
-#[post("/{server_name}")]
 
+#[post("/{server_name}")]
 async fn save_server_page(
     server_name: Path<String>,
     form: QsForm<EnvForm>,
