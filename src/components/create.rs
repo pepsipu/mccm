@@ -44,6 +44,8 @@ pub fn create_page(
 
 fn modpack_card(pack: &ProjectHit) -> Markup {
     let id = format!("name-{}", pack.project_id);
+    let downloads_badge = format!("{} downloads", pack.downloads);
+    let date_badge = format!("updated {}", date_part(&pack.date_modified));
 
     html! {
         div .card {
@@ -52,10 +54,15 @@ fn modpack_card(pack: &ProjectHit) -> Markup {
             }
 
             div .card-body {
-                strong { (pack.title) }
-                div { (pack.description) }
                 div {
-                    small { (format!("Downloads: {}  Follows: {}  Updated: {}", pack.downloads, pack.follows, pack.date_modified)) }
+                    div .card-title {
+                        strong { (pack.title) }
+                        span .badges {
+                            span .badge { (downloads_badge) }
+                            span .badge { (date_badge) }
+                        }
+                    }
+                    div { (pack.description) }
                 }
 
                 form method="post" action="/create" {
@@ -82,4 +89,8 @@ fn env_pair(key: &str, value: &str) -> Markup {
         input type="hidden" name="key" value=(key) {}
         input type="hidden" name="value" value=(value) {}
     }
+}
+
+fn date_part(s: &str) -> &str {
+    s.split_once('T').map(|(d, _)| d).unwrap_or(s)
 }

@@ -16,7 +16,6 @@ pub struct ProjectHit {
     pub title: String,
     pub description: String,
     pub downloads: u64,
-    pub follows: u64,
     pub icon_url: Option<String>,
     pub date_modified: String,
 }
