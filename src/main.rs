@@ -4,6 +4,7 @@ use bollard::Docker;
 
 mod components;
 mod compose;
+mod modrinth;
 mod routes;
 mod server;
 

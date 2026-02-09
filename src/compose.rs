@@ -52,6 +52,9 @@ fn compose_path(server_name: &str) -> Result<PathBuf> {
 
 pub fn create_compose_project(name: &str) -> Result<()> {
     let path = compose_path(name)?;
+    if path.exists() {
+        anyhow::bail!("server already exists");
+    }
     fs::create_dir_all(path.parent().unwrap())?;
     fs::write(path, serde_yaml::to_string(&create_compose(name))?)?;
     Ok(())
@@ -65,6 +68,10 @@ pub fn read_compose_project(server_name: &str) -> Result<Compose> {
 pub fn write_compose_project(server_name: &str, compose: &Compose) -> Result<()> {
     fs::write(compose_path(server_name)?, serde_yaml::to_string(compose)?)?;
     Ok(())
+}
+
+pub fn server_exists(server_name: &str) -> Result<bool> {
+    Ok(compose_path(server_name)?.exists())
 }
 
 pub fn list_servers() -> Result<Vec<String>> {
