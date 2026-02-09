@@ -40,6 +40,7 @@ pub fn create_page(
         @for pack in modpacks {
             (modpack_card(
                 Some(&format!("/create/modrinth/{}", pack.slug)),
+                false,
                 &pack.title,
                 &pack.description,
                 pack.icon_url.as_deref(),
@@ -56,7 +57,8 @@ pub fn modpack_create_page(project: &Project) -> Markup {
     html! {
         h2 { "Create from Modrinth modpack" }
         (modpack_card(
-            None,
+            Some(&format!("https://modrinth.com/modpack/{}", project.slug)),
+            true,
             &project.title,
             &project.description,
             project.icon_url.as_deref(),
@@ -69,6 +71,7 @@ pub fn modpack_create_page(project: &Project) -> Markup {
 
 fn modpack_card(
     href: Option<&str>,
+    new_tab: bool,
     title: &str,
     description: &str,
     icon_url: Option<&str>,
@@ -97,7 +100,11 @@ fn modpack_card(
 
     html! {
         @if let Some(href) = href {
-            a .card href=(href) { (body) }
+            @if new_tab {
+                a .card href=(href) target="_blank" rel="noopener noreferrer" { (body) }
+            } @else {
+                a .card href=(href) { (body) }
+            }
         } @else {
             div .card { (body) }
         }
