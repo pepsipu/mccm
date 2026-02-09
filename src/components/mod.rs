@@ -6,7 +6,7 @@ pub mod env_editor;
 pub mod motd;
 
 pub use card::server_card;
-pub use create::create_page;
+pub use create::{create_page, modpack_create_page};
 pub use env_editor::env_editor;
 
 pub fn header() -> Markup {

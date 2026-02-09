@@ -7,6 +7,8 @@ use serde_qs::actix::QsForm;
 
 use crate::{components, compose, modrinth};
 
+mod modpack;
+
 #[derive(Deserialize)]
 struct SearchQuery {
     q: Option<String>,
@@ -90,4 +92,5 @@ pub fn configure(cfg: &mut web::ServiceConfig) {
             .route(web::get().to(get_create))
             .route(web::post().to(post_create)),
     );
+    modpack::configure(cfg);
 }

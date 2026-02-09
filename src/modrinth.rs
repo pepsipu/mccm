@@ -6,21 +6,21 @@ const USER_AGENT: &str = "mccm";
 
 #[derive(Debug, Clone, Deserialize)]
 pub struct SearchResponse {
-    pub hits: Vec<ProjectHit>,
+    pub hits: Vec<Project>,
 }
 
 #[derive(Debug, Clone, Deserialize)]
-pub struct ProjectHit {
-    pub project_id: String,
+pub struct Project {
     pub slug: String,
     pub title: String,
     pub description: String,
     pub downloads: u64,
     pub icon_url: Option<String>,
-    pub date_modified: String,
+    #[serde(alias = "date_modified")]
+    pub updated: String,
 }
 
-pub async fn search_modpacks(query: Option<&str>) -> anyhow::Result<Vec<ProjectHit>> {
+pub async fn search_modpacks(query: Option<&str>) -> anyhow::Result<Vec<Project>> {
     let client = reqwest::Client::new();
     let facets = r#"[["project_type:modpack"]]"#;
 
@@ -47,4 +47,21 @@ pub async fn search_modpacks(query: Option<&str>) -> anyhow::Result<Vec<ProjectH
         .context("failed to parse modrinth response")?;
 
     Ok(res.hits)
+}
+
+pub async fn get_project(id_or_slug: &str) -> anyhow::Result<Project> {
+    let client = reqwest::Client::new();
+    let url = format!("{MODRINTH_API}/project/{id_or_slug}");
+    let res = client
+        .get(url)
+        .header(reqwest::header::USER_AGENT, USER_AGENT)
+        .send()
+        .await
+        .context("modrinth request failed")?
+        .error_for_status()
+        .context("modrinth returned an error")?
+        .json::<Project>()
+        .await
+        .context("failed to parse modrinth response")?;
+    Ok(res)
 }

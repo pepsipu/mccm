@@ -1,12 +1,13 @@
 use maud::{Markup, html};
 
-use crate::modrinth::ProjectHit;
+use crate::components::env_editor;
+use crate::modrinth::Project;
 
 pub fn create_page(
     q: Option<&str>,
     error: Option<&str>,
     modrinth_error: bool,
-    modpacks: &[ProjectHit],
+    modpacks: &[Project],
 ) -> Markup {
     html! {
         h2 { "Create server" }
@@ -37,58 +38,107 @@ pub fn create_page(
         }
 
         @for pack in modpacks {
-            (modpack_card(pack))
+            (modpack_card(
+                Some(&format!("/create/modrinth/{}", pack.slug)),
+                &pack.title,
+                &pack.description,
+                pack.icon_url.as_deref(),
+                pack.downloads,
+                &pack.updated,
+            ))
         }
     }
 }
 
-fn modpack_card(pack: &ProjectHit) -> Markup {
-    let id = format!("name-{}", pack.project_id);
-    let downloads_badge = format!("{} downloads", pack.downloads);
-    let date_badge = format!("updated {}", date_part(&pack.date_modified));
+pub fn modpack_create_page(project: &Project) -> Markup {
+    let env = default_modpack_env(project);
 
     html! {
-        div .card {
-            @if let Some(icon_url) = &pack.icon_url {
-                img src=(icon_url) width="64px" height="64px" {}
-            }
+        h2 { "Create from Modrinth modpack" }
+        (modpack_card(
+            None,
+            &project.title,
+            &project.description,
+            project.icon_url.as_deref(),
+            project.downloads,
+            &project.updated,
+        ))
+        (create_form(&project.slug, &env))
+    }
+}
 
-            div .card-body {
-                div {
-                    div .card-title {
-                        strong { (pack.title) }
-                        span .badges {
-                            span .badge { (downloads_badge) }
-                            span .badge { (date_badge) }
-                        }
-                    }
-                    div { (pack.description) }
+fn modpack_card(
+    href: Option<&str>,
+    title: &str,
+    description: &str,
+    icon_url: Option<&str>,
+    downloads: u64,
+    date: &str,
+) -> Markup {
+    let downloads_badge = format!("{} downloads", downloads);
+    let date_badge = date_part(date);
+
+    let body = html! {
+        @if let Some(icon_url) = icon_url {
+            img src=(icon_url) width="64px" height="64px" {}
+        }
+
+        div .card-body {
+            div .card-title {
+                strong { (title) }
+                span .badges {
+                    span .badge { (downloads_badge) }
+                    span .badge { (date_badge) }
                 }
-
-                form method="post" action="/create" {
-                    (env_pair("TYPE", "MODRINTH"))
-                    (env_pair("MODRINTH_MODPACK", &pack.slug))
-                    (env_pair("MOTD", &pack.title))
-
-                    @if let Some(icon_url) = &pack.icon_url {
-                        (env_pair("ICON", icon_url))
-                    }
-
-                    label for=(id) { "Server name" }
-                    input type="text" name="name" id=(id) value=(pack.slug) {}
-
-                    button type="submit" { "Create" }
-                }
             }
+            div { (description) }
+        }
+    };
+
+    html! {
+        @if let Some(href) = href {
+            a .card href=(href) { (body) }
+        } @else {
+            div .card { (body) }
         }
     }
 }
 
-fn env_pair(key: &str, value: &str) -> Markup {
+fn create_form(default_name: &str, env: &[(String, String)]) -> Markup {
     html! {
-        input type="hidden" name="key" value=(key) {}
-        input type="hidden" name="value" value=(value) {}
+        div {
+            h3 { "Create server" }
+            (env_editor::env_form(
+                "/create",
+                env,
+                html! {
+                    .env-row {
+                        input
+                            type="text"
+                            name="name"
+                            placeholder="Server name"
+                            value=(default_name) {}
+                    }
+                },
+                "Create",
+            ))
+        }
     }
+}
+
+fn default_modpack_env(project: &Project) -> Vec<(String, String)> {
+    let mut env = vec![
+        ("EULA".to_string(), "TRUE".to_string()),
+        ("TYPE".to_string(), "MODRINTH".to_string()),
+        ("MODRINTH_MODPACK".to_string(), project.slug.to_string()),
+        ("MOTD".to_string(), project.title.to_string()),
+    ];
+
+    if let Some(icon_url) = &project.icon_url {
+        env.push(("ICON".to_string(), icon_url.to_string()));
+    }
+
+    env
 }
 
 fn date_part(s: &str) -> &str {
